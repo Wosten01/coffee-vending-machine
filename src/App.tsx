@@ -1,12 +1,11 @@
-import './App.css'
+import './App.css';
 
 function App() {
-
   return (
     <>
-    <div className='bg-black text-white'>Aboba</div>
+      <div className="bg-black text-white">Coffee Vending Machine</div>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
