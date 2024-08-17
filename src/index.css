@@ -1,3 +1,10 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.fixed-screen {
+  width: 768px;
+  height: 1024px;
+  margin: 0 auto;
+  overflow: hidden;
+}
