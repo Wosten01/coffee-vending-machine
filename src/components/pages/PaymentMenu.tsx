@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setPaymentMethod } from '../../store/appSlice';
 import { RootState } from '../../store';
 import emulator from '../../core/emulator';
-import products from '../../data/products';
+import { coffee as products } from '../../data/products';
 
 function PaymentMenu() {
   const dispatch = useDispatch();

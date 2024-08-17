@@ -5,7 +5,7 @@ export type Product = {
   image: string;
 };
 
-const coffee: Product[] = [
+export const coffee: Product[] = [
   {
     id: 1,
     name: 'Эспрессо',
@@ -42,42 +42,4 @@ const coffee: Product[] = [
     price: 129,
     image: './src/assets/coffee/macchiato.png',
   },
-  {
-    id: 6,
-    name: 'Макиато',
-    price: 129,
-    image: './src/assets/coffee/macchiato.png',
-  },
-  {
-    id: 6,
-    name: 'Макиато',
-    price: 129,
-    image: './src/assets/coffee/macchiato.png',
-  },
-  {
-    id: 6,
-    name: 'Макиато',
-    price: 129,
-    image: './src/assets/coffee/macchiato.png',
-  },
-  {
-    id: 6,
-    name: 'Макиато',
-    price: 129,
-    image: './src/assets/coffee/macchiato.png',
-  },
-  {
-    id: 6,
-    name: 'Макиато',
-    price: 129,
-    image: './src/assets/coffee/macchiato.png',
-  },
-  {
-    id: 6,
-    name: 'Макиато',
-    price: 129,
-    image: './src/assets/coffee/macchiato.png',
-  },
 ];
-
-export default coffee;
