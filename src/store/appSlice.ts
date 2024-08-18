@@ -35,6 +35,7 @@ const appSlice = createSlice({
   },
 });
 
-export const { selectProduct, resetApp } = appSlice.actions;
+export const { selectProduct, resetApp, addToAmount, resetAmount } =
+  appSlice.actions;
 
 export default appSlice.reducer;

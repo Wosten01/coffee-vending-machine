@@ -1,38 +1,44 @@
-import { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../store';
 import emulator from '../../../core/emulator';
 import { useNavigate } from 'react-router-dom';
 import NothingToShowScreen from '../../shared/NothingToShowScreen';
+import { addToAmount, resetApp } from '../../../store/appSlice';
 
 function PaymentMenu() {
   const selectedProduct = useSelector(
     (state: RootState) => state.app.selectedProduct
   );
-  const [paymentMessage, setPaymentMessage] = useState('');
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (!selectedProduct) {
+      dispatch(resetApp());
+      navigate('/');
+    }
+  }, [selectedProduct, navigate, dispatch]);
+
+  if (!selectedProduct) {
+    return <NothingToShowScreen text="Нет выбранного продукта" />;
+  }
 
   function handlePaymentMethod(method: string) {
     if (method === 'cash') {
       emulator.StartCashin((amount) => {
-        setPaymentMessage(`Принято ${amount} рублей`);
+        dispatch(addToAmount({ amount: amount }));
       });
       navigate('/cash');
     } else if (method === 'card') {
       if (selectedProduct) {
-        emulator.BankCardPurchase(
-          selectedProduct.price,
-          (result) => {
-            if (result) setPaymentMessage('Транзакция успешна');
-          },
-          setPaymentMessage
-        );
+        // emulator.BankCardPurchase(
+        //   selectedProduct.price,
+        //   (result) => {
+        //   },
+        // );
       }
     }
-  }
-
-  if (!selectedProduct) {
-    return <NothingToShowScreen text="Товар не найден :(" />;
   }
 
   return (
@@ -42,7 +48,7 @@ function PaymentMenu() {
         <img
           src={selectedProduct.image}
           alt={selectedProduct.name}
-          className="w-96 h-96"
+          className="w-80 h-80"
         />
         <h1 className="text-6xl font-thin tracking-wider ">
           {selectedProduct.name}
@@ -55,27 +61,38 @@ function PaymentMenu() {
         </div>
       </section>
 
-      <section className="">
-        <h2 className="text-4xl font-thin text-gray-800 mb-8 text-center">
-          Выберите способ оплаты
-        </h2>
-        <div className="flex space-x-8 justify-center">
-          <button
-            className="px-8 py-4 text-3xl font-light rounded-xl border bg-gray-200 border-gray-300 shadow-md hover:bg-gray-300 transition-all"
-            onClick={() => handlePaymentMethod('cash')}
-          >
-            Оплата наличными
-          </button>
+      <section className="flex flex-col justify-center items-center gap-6">
+        <section className="">
+          <h2 className="text-4xl font-thin text-gray-800 mb-8 text-center">
+            Выберите способ оплаты
+          </h2>
+          <div className="flex space-x-8 justify-center">
+            <button
+              className="px-8 py-4 text-3xl font-light rounded-xl border bg-gray-200 border-gray-300 shadow-md hover:bg-gray-300 transition-all"
+              onClick={() => handlePaymentMethod('cash')}
+            >
+              Оплата наличными
+            </button>
+            <button
+              className="text-3xl font-light px-8 py-4 bg-gray-200 rounded-xl shadow-md hover:bg-gray-300 transition-all"
+              onClick={() => handlePaymentMethod('card')}
+            >
+              Оплата картой
+            </button>
+          </div>
+        </section>
+
+        <section className="">
           <button
             className="px-8 py-4 bg-yellow-300 text-3xl font-light rounded-xl border border-yellow-600 shadow-md hover:bg-yellow-500 transition-all"
-            onClick={() => handlePaymentMethod('card')}
+            onClick={() => {
+              navigate('/');
+              dispatch(resetApp());
+            }}
           >
-            Оплата картой
+            Вернуться
           </button>
-        </div>
-        {paymentMessage && (
-          <p className=" text-3xl font-bold text-center">{paymentMessage}</p>
-        )}
+        </section>
       </section>
     </div>
   );

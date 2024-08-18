@@ -1,32 +1,42 @@
 // emulator.d.ts
 interface Emulator {
-  StartCashin(cb: (amount: number) => void): void;
+  StartCashin(callback: (amount: number) => void): void;
   StopCashin(): void;
   BankCardPurchase(
     amount: number,
-    cb: (result: boolean) => void,
-    display_cb: (message: string) => void
+    callback: (result: boolean) => void,
+    display_callback: (message: string) => void
   ): void;
   BankCardCancel(): void;
-  Vend(product_idx: number, cb: (result: boolean) => void): void;
+  Vend(product_idx: number, callback: (result: boolean) => void): void;
 }
 
 const emulator: Emulator = {
-  StartCashin(cb) {
+  StartCashin(callback) {
     console.log('Cashin started');
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === '1') {
+      console.log(`Key pressed: ${event.key}`);
+      if (event.key == '1') {
         setTimeout(() => {
-          cb(10); // Simulate receiving a 10-unit bill
+          callback(5);
         }, 1000);
-      } else if (event.key === '2') {
+      } else if (event.key == '2') {
         setTimeout(() => {
-          cb(50); // Simulate receiving a 50-unit bill
+          callback(10);
+        }, 1000);
+      } else if (event.key == '3') {
+        setTimeout(() => {
+          callback(50);
+        }, 1000);
+      } else if (event.key == '4') {
+        setTimeout(() => {
+          callback(100);
         }, 1000);
       }
     };
 
+    // Обработчик для остановки
     const handleStopKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         console.log('Cashin stopped');
@@ -35,6 +45,7 @@ const emulator: Emulator = {
       }
     };
 
+    // Добавляем обработчики событий
     document.addEventListener('keydown', handleKeyDown);
     document.addEventListener('keydown', handleStopKeyDown);
   },
