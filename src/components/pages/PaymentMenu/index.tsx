@@ -31,7 +31,11 @@ function PaymentMenu() {
   }
 
   if (!selectedProduct) {
-    return <div>Товар не найден</div>;
+    return (
+      <div className="h-full w-full flex flex-col justify-center items-center text-center text-red-500 font-light text-6xl ">
+        <span>Товар не найден :(</span>
+      </div>
+    );
   }
 
   return (

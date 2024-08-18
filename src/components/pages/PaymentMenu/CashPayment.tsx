@@ -11,7 +11,9 @@ function CashPayment() {
 
   if (!selectedProduct) {
     return (
-      <div className="text-center text-red-600">Нет выбранного продукта</div>
+      <div className="h-full w-full flex justify-center items-center text-center text-red-500 font-light text-8xl ">
+        Нет выбранного продукта
+      </div>
     );
   }
 
