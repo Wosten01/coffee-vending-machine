@@ -4,6 +4,7 @@ import { setPaymentMethod } from '../../store/appSlice';
 import { RootState } from '../../store';
 import emulator from '../../core/emulator';
 import { coffee as products } from '../../data/products';
+import { useNavigate } from 'react-router-dom';
 
 function PaymentMenu() {
   const dispatch = useDispatch();
@@ -11,6 +12,7 @@ function PaymentMenu() {
     (state: RootState) => state.app.selectedProduct
   );
   const [paymentMessage, setPaymentMessage] = useState('');
+  const navigate = useNavigate();
 
   function handlePaymentMethod(method: string) {
     dispatch(setPaymentMethod(method));
@@ -19,6 +21,7 @@ function PaymentMenu() {
       emulator.StartCashin((amount) => {
         setPaymentMessage(`Принято ${amount} рублей`);
       });
+      navigate('/drink-preparation');
     } else if (method === 'card') {
       emulator.BankCardPurchase(
         products[selectedProduct!].price,
@@ -27,6 +30,7 @@ function PaymentMenu() {
         },
         setPaymentMessage
       );
+      navigate('/drink-preparation');
     }
   }
 

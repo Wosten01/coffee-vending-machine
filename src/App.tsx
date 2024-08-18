@@ -1,18 +1,19 @@
-import { useSelector } from 'react-redux';
-import { RootState } from './store';
 import ProductsMenu from './components/pages/ProductsMenu';
 import PaymentMenu from './components/pages/PaymentMenu';
 import DrinkPreparation from './components/pages/DrinkPreparation';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 function App() {
-  const step = useSelector((state: RootState) => state.app.step);
-
   return (
     <div className="p-10">
       <div className="fixed-screen border border-black rounded-xl">
-        {step === 1 && <ProductsMenu />}
-        {step === 2 && <PaymentMenu />}
-        {step === 3 && <DrinkPreparation />}
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<ProductsMenu />} />
+            <Route path="/payment-selection" element={<PaymentMenu />} />
+            <Route path="/drink-preparation" element={<DrinkPreparation />} />
+          </Routes>
+        </BrowserRouter>
       </div>
     </div>
   );
