@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../store';
 import CashIcon from '../../shared/CashIcon';
+import NothingToShowScreen from '../../shared/NothingToShowScreen';
 
 function CashPayment() {
   const navigate = useNavigate();
@@ -10,11 +11,7 @@ function CashPayment() {
   );
 
   if (!selectedProduct) {
-    return (
-      <div className="h-full w-full flex justify-center items-center text-center text-red-500 font-light text-8xl ">
-        Нет выбранного продукта
-      </div>
-    );
+    return <NothingToShowScreen text="Нет выбранного продукта" />;
   }
 
   const requiredAmount = selectedProduct.price;

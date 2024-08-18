@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../store';
 import emulator from '../../../core/emulator';
 import { useNavigate } from 'react-router-dom';
+import NothingToShowScreen from '../../shared/NothingToShowScreen';
 
 function PaymentMenu() {
   const selectedProduct = useSelector(
@@ -31,11 +32,7 @@ function PaymentMenu() {
   }
 
   if (!selectedProduct) {
-    return (
-      <div className="h-full w-full flex flex-col justify-center items-center text-center text-red-500 font-light text-6xl ">
-        <span>Товар не найден :(</span>
-      </div>
-    );
+    return <NothingToShowScreen text="Товар не найден :(" />;
   }
 
   return (
