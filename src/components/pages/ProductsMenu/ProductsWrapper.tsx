@@ -2,6 +2,7 @@ import { useDispatch } from 'react-redux';
 import { selectProduct } from '../../../store/appSlice';
 import { Product } from '../../../data/products';
 import ProductCard from './ProductCard';
+// import { useNavigate } from 'react-router-dom';
 
 interface ProductsWrapperProps {
   products: Product[];
@@ -9,9 +10,11 @@ interface ProductsWrapperProps {
 
 function ProductsWrapper({ products }: ProductsWrapperProps) {
   const dispatch = useDispatch();
+  // const navigate = useNavigate(); // Добавляем useNavigate для переходов
 
   const handleSelectProduct = (productId: number) => {
     dispatch(selectProduct(productId));
+    // navigate('/payment-selection'); // Переход на страницу выбора оплаты
   };
 
   return (
