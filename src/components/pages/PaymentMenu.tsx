@@ -45,7 +45,7 @@ function PaymentMenu() {
       </section>
       <section>
         <div className="flex flex-col text-yellow-600 text-opacity-65 justify-center items-center ">
-          <p className="text-4xl font-semibold tracking-widest ">Итого:</p>
+          <p className="text-4xl font-light">Итого:</p>
           <p className="text-9xl  font-bold ">
             {products[selectedProduct!].price}₽
           </p>
