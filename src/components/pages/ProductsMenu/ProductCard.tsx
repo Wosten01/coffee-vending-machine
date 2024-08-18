@@ -2,17 +2,13 @@ import { Product } from '../../../data/products';
 
 interface ProductCardProps {
   product: Product;
-  onSelect: (productId: number) => void;
+  onSelect: (product: Product) => void;
 }
 
 function ProductCard({ product, onSelect }: ProductCardProps) {
   return (
     <main className="bg-white rounded-xl border-slate-700 border overflow-hidden cursor-pointer hover:shadow-xl transition-shadow duration-300">
-      <div
-        key={product.id}
-        className="p-4"
-        onClick={() => onSelect(product.id)}
-      >
+      <div key={product.id} className="p-4" onClick={() => onSelect(product)}>
         <img
           src={product.image}
           alt={product.name}

@@ -11,8 +11,8 @@ interface ProductsWrapperProps {
 function ProductsWrapper({ products }: ProductsWrapperProps) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const handleSelectProduct = (productId: number) => {
-    dispatch(selectProduct(productId));
+  const handleSelectProduct = (product: Product) => {
+    dispatch(selectProduct(product));
     navigate('/payment-selection');
   };
 

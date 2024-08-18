@@ -1,13 +1,10 @@
 import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { setPaymentMethod } from '../../store/appSlice';
-import { RootState } from '../../store';
-import emulator from '../../core/emulator';
-import { coffee as products } from '../../data/products';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../store';
+import emulator from '../../../core/emulator';
 import { useNavigate } from 'react-router-dom';
 
 function PaymentMenu() {
-  const dispatch = useDispatch();
   const selectedProduct = useSelector(
     (state: RootState) => state.app.selectedProduct
   );
@@ -15,23 +12,26 @@ function PaymentMenu() {
   const navigate = useNavigate();
 
   function handlePaymentMethod(method: string) {
-    dispatch(setPaymentMethod(method));
-
     if (method === 'cash') {
       emulator.StartCashin((amount) => {
         setPaymentMessage(`Принято ${amount} рублей`);
       });
-      navigate('/drink-preparation');
+      navigate('/cash');
     } else if (method === 'card') {
-      emulator.BankCardPurchase(
-        products[selectedProduct!].price,
-        (result) => {
-          if (result) setPaymentMessage('Транзакция успешна');
-        },
-        setPaymentMessage
-      );
-      navigate('/drink-preparation');
+      if (selectedProduct) {
+        emulator.BankCardPurchase(
+          selectedProduct.price,
+          (result) => {
+            if (result) setPaymentMessage('Транзакция успешна');
+          },
+          setPaymentMessage
+        );
+      }
     }
+  }
+
+  if (!selectedProduct) {
+    return <div>Товар не найден</div>;
   }
 
   return (
@@ -39,20 +39,18 @@ function PaymentMenu() {
       <section className="flex flex-col items-center text-center gap-6">
         <p className="text-5xl font-thin tracking-wider">Ваш напиток</p>
         <img
-          src={products[selectedProduct!].image}
-          alt={products[selectedProduct!].name}
+          src={selectedProduct.image}
+          alt={selectedProduct.name}
           className="w-96 h-96"
         />
         <h1 className="text-6xl font-thin tracking-wider ">
-          {products[selectedProduct!].name}
+          {selectedProduct.name}
         </h1>
       </section>
       <section>
         <div className="flex flex-col text-yellow-600 text-opacity-65 justify-center items-center ">
           <p className="text-4xl font-light">Итого:</p>
-          <p className="text-9xl  font-bold ">
-            {products[selectedProduct!].price}₽
-          </p>
+          <p className="text-9xl  font-bold ">{selectedProduct.price}₽</p>
         </div>
       </section>
 

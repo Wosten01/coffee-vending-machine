@@ -1,32 +1,40 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { Product } from '../data/products';
 
 interface AppState {
-  selectedProduct: number | null;
-  paymentMethod: string | null;
+  selectedProduct: Product | null;
+  enteredAmount: number;
+}
+
+interface AmountPayload {
+  amount: number;
 }
 
 const initialState: AppState = {
   selectedProduct: null,
-  paymentMethod: null,
+  enteredAmount: 0,
 };
 
 const appSlice = createSlice({
   name: 'app',
   initialState,
   reducers: {
-    selectProduct: (state, action: PayloadAction<number>) => {
-      state.selectedProduct = action.payload;
+    addToAmount: (state, action: PayloadAction<AmountPayload>) => {
+      state.enteredAmount += action.payload.amount;
     },
-    setPaymentMethod: (state, action: PayloadAction<string>) => {
-      state.paymentMethod = action.payload;
+    resetAmount: (state) => {
+      state.enteredAmount = 0;
+    },
+    selectProduct: (state, action: PayloadAction<Product>) => {
+      state.selectedProduct = action.payload;
     },
     resetApp: (state) => {
       state.selectedProduct = null;
-      state.paymentMethod = null;
+      appSlice.caseReducers.resetAmount(state);
     },
   },
 });
 
-export const { selectProduct, setPaymentMethod, resetApp } = appSlice.actions;
+export const { selectProduct, resetApp } = appSlice.actions;
 
 export default appSlice.reducer;
