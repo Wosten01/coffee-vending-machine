@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../store';
 import CashIcon from '../../shared/CashIcon';
 import NothingToShowScreen from '../../shared/NothingToShowScreen';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { resetApp } from '../../../store/appSlice';
 import emulator from '../../../core/emulator';
 
@@ -12,7 +12,10 @@ function CashPayment() {
   const { selectedProduct, enteredAmount } = useSelector(
     (state: RootState) => state.app
   );
+  const { status } = useSelector((state: RootState) => state.cashAcceptor);
+
   const dispatch = useDispatch();
+  const [statusMessage, setStatusMessage] = useState('');
 
   useEffect(() => {
     if (!selectedProduct) {
@@ -21,6 +24,31 @@ function CashPayment() {
       emulator.StopCashin();
     }
   }, [selectedProduct, navigate, dispatch]);
+
+  useEffect(() => {
+    switch (status) {
+      case 'idle':
+        if (enteredAmount == 0) {
+          setStatusMessage('Внесите купюры в купюроприемник');
+        } else {
+          setStatusMessage('Можно вносить деньги');
+        }
+        break;
+      case 'processing':
+        setStatusMessage('Подождите, идет обработка...');
+        break;
+      case 'error':
+        setStatusMessage('Что-то пошло не так :(');
+        break;
+    }
+  }, [status, enteredAmount]);
+
+  useEffect(() => {
+    if (selectedProduct && enteredAmount >= selectedProduct?.price) {
+      setStatusMessage('Денег достаточно, обработка завершена.');
+      emulator.StopCashin();
+    }
+  }, [enteredAmount, selectedProduct]);
 
   if (!selectedProduct) {
     return <NothingToShowScreen text="Нет выбранного продукта" />;
@@ -44,24 +72,13 @@ function CashPayment() {
     <div className="h-full w-full flex flex-col justify-between items-center p-6">
       <h1 className="text-5xl font-thin tracking-wider">Платежный экран</h1>
       <section className="flex justify-center items-center p-6 w-full">
-        <div className="flex flex-col text-5xl text-center font-thin tracking-widest gap-4">
+        <div className="flex flex-col text-5xl text-center font-thin tracking-widest gap-2">
           <div className="flex flex-col items-center p-4 text-center">
             <CashIcon className="fill-green-600" width={150} height={150} />
             <section className="flex flex-col items-center justify-center h-full w-full">
-              {enteredAmount > 0 ? (
-                <div>
-                  <p className=" text-center text-5xl font-thin text-green-600 flex items-center justify-center">
-                    Внесено{' '}
-                  </p>
-                  <span className=" font-bold text-5xl text-green-600">
-                    {enteredAmount.toFixed(0)}₽
-                  </span>
-                </div>
-              ) : (
-                <p className="h-32 text-center text-5xl font-thin text-green-600 flex items-center justify-center">
-                  <span>Внесите банкноты в купюроприемник</span>
-                </p>
-              )}
+              <p className="h-32 text-center text-5xl font-thin text-green-600 flex items-center justify-center">
+                <span>{statusMessage}</span>
+              </p>
             </section>
           </div>
           <div className="flex flex-col gap-4">

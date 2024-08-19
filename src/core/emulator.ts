@@ -1,4 +1,3 @@
-// emulator.d.ts
 interface Emulator {
   StartCashin(callback: (amount: number) => void): void;
   StopCashin(): void;
@@ -11,46 +10,54 @@ interface Emulator {
   Vend(product_idx: number, callback: (result: boolean) => void): void;
 }
 
-const emulator: Emulator = {
+interface EmulatorState {
+  handleKeyDown: ((event: KeyboardEvent) => void) | null;
+  handleStopKeyDown: ((event: KeyboardEvent) => void) | null;
+}
+
+const emulator: Emulator & EmulatorState = {
+  handleKeyDown: null as ((event: KeyboardEvent) => void) | null,
+  handleStopKeyDown: null as ((event: KeyboardEvent) => void) | null,
+
   StartCashin(callback) {
     console.log('Cashin started');
 
-    const handleKeyDown = (event: KeyboardEvent) => {
+    // Определяем обработчик для ввода купюр
+    this.handleKeyDown = (event: KeyboardEvent) => {
       console.log(`Key pressed: ${event.key}`);
-      if (event.key == '1') {
-        setTimeout(() => {
-          callback(5);
-        }, 1000);
-      } else if (event.key == '2') {
-        setTimeout(() => {
-          callback(10);
-        }, 1000);
-      } else if (event.key == '3') {
-        setTimeout(() => {
-          callback(50);
-        }, 1000);
-      } else if (event.key == '4') {
-        setTimeout(() => {
-          callback(100);
-        }, 1000);
+      if (event.key === '1') {
+        callback(5);
+      } else if (event.key === '2') {
+        callback(10);
+      } else if (event.key === '3') {
+        callback(50);
+      } else if (event.key === '4') {
+        callback(100);
       }
     };
 
-    // Обработчик для остановки
-    const handleStopKeyDown = (event: KeyboardEvent) => {
+    this.handleStopKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         console.log('Cashin stopped');
-        document.removeEventListener('keydown', handleKeyDown);
-        document.removeEventListener('keydown', handleStopKeyDown);
+        this.StopCashin();
       }
     };
 
-    // Добавляем обработчики событий
-    document.addEventListener('keydown', handleKeyDown);
-    document.addEventListener('keydown', handleStopKeyDown);
+    if (this.handleKeyDown) {
+      document.addEventListener('keydown', this.handleKeyDown);
+    }
+    if (this.handleStopKeyDown) {
+      document.addEventListener('keydown', this.handleStopKeyDown);
+    }
   },
 
   StopCashin() {
+    if (this.handleKeyDown) {
+      document.removeEventListener('keydown', this.handleKeyDown);
+    }
+    if (this.handleStopKeyDown) {
+      document.removeEventListener('keydown', this.handleStopKeyDown);
+    }
     console.log('Cashin stopped');
   },
 

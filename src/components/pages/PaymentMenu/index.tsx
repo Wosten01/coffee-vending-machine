@@ -5,10 +5,14 @@ import emulator from '../../../core/emulator';
 import { useNavigate } from 'react-router-dom';
 import NothingToShowScreen from '../../shared/NothingToShowScreen';
 import { addToAmount, resetApp } from '../../../store/appSlice';
+import { resetStatus, setProcessing } from '../../../store/cashAcceptorSlice';
 
 function PaymentMenu() {
   const selectedProduct = useSelector(
     (state: RootState) => state.app.selectedProduct
+  );
+  const cashStatus = useSelector(
+    (state: RootState) => state.cashAcceptor.status
   );
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -27,7 +31,13 @@ function PaymentMenu() {
   function handlePaymentMethod(method: string) {
     if (method === 'cash') {
       emulator.StartCashin((amount) => {
-        dispatch(addToAmount({ amount: amount }));
+        if (cashStatus === 'idle') {
+          dispatch(setProcessing());
+          setTimeout(() => {
+            dispatch(addToAmount({ amount: amount }));
+            dispatch(resetStatus());
+          }, 2000);
+        }
       });
       navigate('/cash');
     } else if (method === 'card') {
