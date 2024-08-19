@@ -47,6 +47,7 @@ function PaymentMenu() {
         //   (result) => {
         //   },
         // );
+        navigate('/card');
       }
     }
   }

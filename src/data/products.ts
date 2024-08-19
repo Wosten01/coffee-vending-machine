@@ -53,7 +53,7 @@ export const coffee: Product[] = [
     id: crypto.randomUUID(),
     name: 'Флэт Уайт',
     price: 129,
-    image: './src/assets/coffee/macchiato.png',
+    image: './src/assets/coffee/flat-white.png',
     time: 75,
   },
 ];

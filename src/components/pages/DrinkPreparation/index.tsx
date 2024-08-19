@@ -1,25 +1,33 @@
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { RootState } from '../../../store';
 import NothingToShowScreen from '../../shared/NothingToShowScreen';
+import { resetApp } from '../../../store/appSlice';
 
 function DrinkPreparation() {
   const selectedProduct = useSelector(
     (state: RootState) => state.app.selectedProduct
   );
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (!selectedProduct) {
+      dispatch(resetApp());
       navigate('/');
     }
-  }, [selectedProduct, navigate]);
+  }, [selectedProduct, navigate, dispatch]);
 
   const time = selectedProduct?.time || 0;
 
   const [secondsLeft, setSecondsLeft] = useState(time);
   const [isComplete, setIsComplete] = useState(false);
+
+  const handleReturn = () => {
+    dispatch(resetApp());
+    navigate('/');
+  };
 
   useEffect(() => {
     if (secondsLeft === 0) {
@@ -74,7 +82,7 @@ function DrinkPreparation() {
         <div className="mt-6 text-center">
           <button
             className="mt-4 px-8 py-4 bg-yellow-300 text-3xl font-light rounded-xl border border-yellow-600 shadow-md hover:bg-yellow-500 transition-all"
-            onClick={() => navigate('/')}
+            onClick={handleReturn}
           >
             Вернуться на главную
           </button>

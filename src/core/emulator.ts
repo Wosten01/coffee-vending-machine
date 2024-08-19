@@ -53,7 +53,6 @@ const emulator: Emulator & EmulatorState = {
           callback(500);
           break;
         default:
-          // Ничего не делаем для других клавиш
           break;
       }
     };
@@ -88,29 +87,125 @@ const emulator: Emulator & EmulatorState = {
     console.log('Cashin stopped');
   },
 
+  // BankCardPurchase(amount, cb, display_cb) {
+  //   console.log(`Processing card payment of ${amount}`);
+
+  //   const messages = [
+  //     'Обработка карты...',
+  //     'Связь с банком...',
+  //     'Проверка средств...',
+  //     'Почти готово...',
+  //   ];
+  //   const errorMessages = [
+  //     'Ошибка транзакции!',
+  //     'Оплата не удалась...',
+  //     'Попробуйте снова.',
+  //   ];
+
+  //   let messageIndex = 0;
+  //   const interval = setInterval(() => {
+  //     if (messageIndex < messages.length) {
+  //       // Отображаем промежуточные сообщения
+  //       display_cb(messages[messageIndex]);
+  //       messageIndex++;
+  //     } else {
+  //       clearInterval(interval);
+
+  //       const result = Math.random() > 0.5;
+  //       cb(result);
+
+  //       if (result) {
+  //         display_cb('Транзакция успешна!');
+  //       } else {
+  //         let errorMessageIndex = 0;
+
+  //         const errorInterval = setInterval(() => {
+  //           if (errorMessageIndex < errorMessages.length) {
+  //             display_cb(errorMessages[errorMessageIndex]);
+  //             errorMessageIndex++;
+  //           } else {
+  //             clearInterval(errorInterval);
+  //           }
+  //         }, 1000);
+  //       }
+  //     }
+  //   }, 1000);
+  // },
   BankCardPurchase(amount, cb, display_cb) {
     console.log(`Processing card payment of ${amount}`);
 
     const messages = [
-      'Приложите карту',
-      'Обработка карты',
-      'Связь с банком',
-      'Проверка средств',
-      'Транзакция успешна',
+      'Обработка карты...',
+      'Связь с банком...',
+      'Проверка средств...',
+      'Почти готово...',
     ];
 
     let messageIndex = 0;
-    const interval = setInterval(() => {
-      if (messageIndex < messages.length) {
-        display_cb(messages[messageIndex]);
-        messageIndex++;
-      } else {
-        clearInterval(interval);
-        const result = Math.random() > 0.1; // 90% chance of successful transaction
-        cb(result);
-        display_cb(result ? 'Транзакция успешна' : 'Ошибка транзакции');
+    let transactionResult: boolean | null = null;
+
+    // Функция для начала транзакции
+    const startTransaction = (result: boolean) => {
+      const interval = setInterval(() => {
+        if (messageIndex < messages.length) {
+          // Отображаем промежуточные сообщения
+          display_cb(messages[messageIndex]);
+          messageIndex++;
+        } else {
+          clearInterval(interval);
+          cb(result);
+
+          if (result) {
+            display_cb('Транзакция успешна!');
+          } else {
+            const errorMessages = [
+              'Ошибка транзакции!',
+              'Оплата не удалась...',
+              'Попробуйте снова.',
+            ];
+            let errorMessageIndex = 0;
+
+            const errorInterval = setInterval(() => {
+              if (errorMessageIndex < errorMessages.length) {
+                display_cb(errorMessages[errorMessageIndex]);
+                errorMessageIndex++;
+              } else {
+                clearInterval(errorInterval);
+              }
+            }, 1000);
+          }
+        }
+      }, 1000);
+    };
+
+    // Обработчик нажатий на клавиши
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === '1') {
+        console.log('Success key pressed');
+        transactionResult = true; // Успешная транзакция
+        startTransaction(transactionResult);
+      } else if (event.key === '2') {
+        console.log('Failure key pressed');
+        transactionResult = false; // Неуспешная транзакция
+        startTransaction(transactionResult);
       }
-    }, 1000);
+    };
+
+    // Добавляем слушатель событий клавиатуры
+    document.addEventListener('keydown', handleKeyDown);
+
+    // Убираем слушатель событий после завершения транзакции
+    const removeListener = () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+
+    // Удаляем слушатель при завершении транзакции
+    const intervalCleanup = setInterval(() => {
+      if (transactionResult !== null) {
+        clearInterval(intervalCleanup);
+        removeListener();
+      }
+    }, 100);
   },
 
   BankCardCancel() {
