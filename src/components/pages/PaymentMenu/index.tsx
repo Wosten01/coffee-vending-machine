@@ -28,15 +28,15 @@ function PaymentMenu() {
     return <NothingToShowScreen text="Нет выбранного продукта" />;
   }
 
-  function handlePaymentMethod(method: string) {
+  async function handlePaymentMethod(method: string) {
     if (method === 'cash') {
-      emulator.StartCashin((amount) => {
-        if (cashStatus === 'idle') {
+      emulator.StartCashin(async (amount) => {
+        console.log(cashStatus);
+        if (cashStatus == 'idle') {
           dispatch(setProcessing());
-          setTimeout(() => {
-            dispatch(addToAmount({ amount: amount }));
-            dispatch(resetStatus());
-          }, 2000);
+          await new Promise((resolve) => setTimeout(resolve, 2000));
+          dispatch(addToAmount({ amount: amount }));
+          dispatch(resetStatus());
         }
       });
       navigate('/cash');

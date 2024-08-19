@@ -22,20 +22,43 @@ const emulator: Emulator & EmulatorState = {
   StartCashin(callback) {
     console.log('Cashin started');
 
+    // Удаляем старые обработчики, если они существуют
+    if (this.handleKeyDown) {
+      document.removeEventListener('keydown', this.handleKeyDown);
+    }
+    if (this.handleStopKeyDown) {
+      document.removeEventListener('keydown', this.handleStopKeyDown);
+    }
+
     // Определяем обработчик для ввода купюр
     this.handleKeyDown = (event: KeyboardEvent) => {
       console.log(`Key pressed: ${event.key}`);
-      if (event.key === '1') {
-        callback(5);
-      } else if (event.key === '2') {
-        callback(10);
-      } else if (event.key === '3') {
-        callback(50);
-      } else if (event.key === '4') {
-        callback(100);
+      switch (event.key) {
+        case '1':
+          setTimeout(() => callback(5), 2000);
+          break;
+        case '2':
+          setTimeout(() => callback(10), 2000);
+          break;
+        case '3':
+          callback(50);
+          break;
+        case '4':
+          callback(100);
+          break;
+        case '5':
+          callback(200);
+          break;
+        case '6':
+          callback(500);
+          break;
+        default:
+          // Ничего не делаем для других клавиш
+          break;
       }
     };
 
+    // Определяем обработчик для остановки
     this.handleStopKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         console.log('Cashin stopped');
@@ -43,6 +66,7 @@ const emulator: Emulator & EmulatorState = {
       }
     };
 
+    // Добавляем новые обработчики событий
     if (this.handleKeyDown) {
       document.addEventListener('keydown', this.handleKeyDown);
     }
@@ -52,11 +76,14 @@ const emulator: Emulator & EmulatorState = {
   },
 
   StopCashin() {
+    // Удаляем обработчики событий
     if (this.handleKeyDown) {
       document.removeEventListener('keydown', this.handleKeyDown);
+      this.handleKeyDown = null; // Очистка ссылки
     }
     if (this.handleStopKeyDown) {
       document.removeEventListener('keydown', this.handleStopKeyDown);
+      this.handleStopKeyDown = null; // Очистка ссылки
     }
     console.log('Cashin stopped');
   },
