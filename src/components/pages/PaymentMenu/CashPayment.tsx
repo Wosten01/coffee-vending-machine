@@ -64,7 +64,6 @@ function CashPayment() {
   };
 
   const handleDispenseChange = () => {
-    emulator.StopCashin();
     navigate('/drink-preparation');
   };
 
