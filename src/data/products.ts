@@ -12,7 +12,8 @@ export const coffee: Product[] = [
     name: 'Эспрессо',
     price: 79,
     image: './src/assets/coffee/espresso.png',
-    time: 30,
+    // time: 30,
+    time: 5,
   },
   {
     id: crypto.randomUUID(),

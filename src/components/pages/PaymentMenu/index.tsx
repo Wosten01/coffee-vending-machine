@@ -14,6 +14,7 @@ function PaymentMenu() {
   const cashStatus = useSelector(
     (state: RootState) => state.cashAcceptor.status
   );
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -28,25 +29,20 @@ function PaymentMenu() {
     return <NothingToShowScreen text="Нет выбранного продукта" />;
   }
 
-  async function handlePaymentMethod(method: string) {
+  function handlePaymentMethod(method: string) {
     if (method === 'cash') {
       emulator.StartCashin(async (amount) => {
-        console.log(cashStatus);
-        if (cashStatus == 'idle') {
+        if (cashStatus === 'idle') {
           dispatch(setProcessing());
           await new Promise((resolve) => setTimeout(resolve, 2000));
           dispatch(addToAmount({ amount: amount }));
           dispatch(resetStatus());
         }
       });
+
       navigate('/cash');
     } else if (method === 'card') {
       if (selectedProduct) {
-        // emulator.BankCardPurchase(
-        //   selectedProduct.price,
-        //   (result) => {
-        //   },
-        // );
         navigate('/card');
       }
     }
