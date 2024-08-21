@@ -3,19 +3,18 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../store';
 import CardIcon from '../../shared/CardIcon';
 import NothingToShowScreen from '../../shared/NothingToShowScreen';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { resetApp } from '../../../store/appSlice';
 import emulator from '../../../core/emulator';
+import { resetCardAcceptor } from '../../../store/cardAcceptorSlice';
 
 function CardPayment() {
   const navigate = useNavigate();
   const { selectedProduct } = useSelector((state: RootState) => state.app);
   const dispatch = useDispatch();
-  const [statusMessage, setStatusMessage] = useState(
-    'Приложите карту для оплаты.'
+  const { statusMessage } = useSelector(
+    (state: RootState) => state.cardAcceptor
   );
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
     if (!selectedProduct) {
@@ -26,40 +25,10 @@ function CardPayment() {
   }, [selectedProduct, navigate, dispatch]);
 
   const handleCancel = () => {
+    dispatch(resetCardAcceptor());
     emulator.BankCardCancel();
     navigate('/payment-selection');
   };
-
-  useEffect(() => {
-    if (selectedProduct && !isProcessing) {
-      setIsProcessing(true);
-
-      emulator.BankCardPurchase(
-        selectedProduct.price,
-        (result: boolean) => {
-          if (result) {
-            setTimeout(() => {
-              setIsProcessing(false);
-              navigate('/drink-preparation');
-            }, 2000);
-          } else {
-            setIsProcessing(false);
-            if (retryCount < 3) {
-              setRetryCount(retryCount + 1);
-            } else {
-              setStatusMessage(
-                'Не удалось завершить оплату. Попробуйте снова.'
-              );
-            }
-          }
-        },
-        (message: string) => {
-          setStatusMessage(message);
-          setIsProcessing(false);
-        }
-      );
-    }
-  }, [selectedProduct, navigate, retryCount, isProcessing]);
 
   if (!selectedProduct) {
     return <NothingToShowScreen text="Нет выбранного продукта" />;

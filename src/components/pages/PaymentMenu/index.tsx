@@ -5,7 +5,11 @@ import emulator from '../../../core/emulator';
 import { useNavigate } from 'react-router-dom';
 import NothingToShowScreen from '../../shared/NothingToShowScreen';
 import { addToAmount, resetApp } from '../../../store/appSlice';
-import { resetStatus, setProcessing } from '../../../store/cashAcceptorSlice';
+import {
+  resetStatus,
+  setProcessing as setCashProcessing,
+} from '../../../store/cashAcceptorSlice';
+import { setStatusMessage } from '../../../store/cardAcceptorSlice';
 
 function PaymentMenu() {
   const selectedProduct = useSelector(
@@ -33,7 +37,7 @@ function PaymentMenu() {
     if (method === 'cash') {
       emulator.StartCashin(async (amount) => {
         if (cashStatus === 'idle') {
-          dispatch(setProcessing());
+          dispatch(setCashProcessing());
           await new Promise((resolve) => setTimeout(resolve, 2000));
           dispatch(addToAmount({ amount: amount }));
           dispatch(resetStatus());
@@ -43,6 +47,19 @@ function PaymentMenu() {
       navigate('/cash');
     } else if (method === 'card') {
       if (selectedProduct) {
+        emulator.BankCardPurchase(
+          selectedProduct.price,
+          (result: boolean) => {
+            if (result) {
+              setTimeout(() => {
+                navigate('/drink-preparation');
+              }, 2000);
+            }
+          },
+          (message: string) => {
+            dispatch(setStatusMessage({ message: message }));
+          }
+        );
         navigate('/card');
       }
     }

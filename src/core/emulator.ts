@@ -94,6 +94,7 @@ const emulator: Emulator & EmulatorState = {
       this.handleStopKeyDown = null;
     }
   },
+
   BankCardPurchase(amount, cb, display_cb) {
     console.log(`Processing card payment of ${amount}`);
 
@@ -107,62 +108,55 @@ const emulator: Emulator & EmulatorState = {
     let messageIndex = 0;
     let transactionResult: boolean | null = null;
 
-    const startTransaction = (result: boolean) => {
-      const interval = setInterval(() => {
-        if (messageIndex < messages.length) {
-          display_cb(messages[messageIndex]);
-          messageIndex++;
-        } else {
-          clearInterval(interval);
-          cb(result);
+    const startTransaction = async (result: boolean) => {
+      while (messageIndex < messages.length) {
+        display_cb(messages[messageIndex]);
+        messageIndex++;
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+      }
 
-          if (result) {
-            display_cb('Транзакция успешна!');
-          } else {
-            const errorMessages = [
-              'Ошибка транзакции!',
-              'Оплата не удалась...',
-              'Попробуйте снова.',
-            ];
-            let errorMessageIndex = 0;
+      await cb(result);
 
-            const errorInterval = setInterval(() => {
-              if (errorMessageIndex < errorMessages.length) {
-                display_cb(errorMessages[errorMessageIndex]);
-                errorMessageIndex++;
-              } else {
-                clearInterval(errorInterval);
-              }
-            }, 1000);
-          }
+      if (result) {
+        display_cb('Транзакция успешна!');
+      } else {
+        messageIndex = 0;
+        const errorMessages = [
+          'Ошибка транзакции!',
+          'Оплата не удалась...',
+          'Попробуйте снова.',
+        ];
+        let errorMessageIndex = 0;
+
+        while (errorMessageIndex < errorMessages.length) {
+          display_cb(errorMessages[errorMessageIndex]);
+          errorMessageIndex++;
+          await new Promise((resolve) => setTimeout(resolve, 1000));
         }
-      }, 1000);
-    };
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === '1') {
-        console.log('Success key pressed');
-        transactionResult = true;
-        startTransaction(transactionResult);
-      } else if (event.key === '2') {
-        console.log('Failure key pressed');
-        transactionResult = false;
-        startTransaction(transactionResult);
       }
     };
 
-    document.addEventListener('keydown', handleKeyDown);
+    const handleKeyDown = async (event: KeyboardEvent) => {
+      if (event.key === '1' || event.key === '2') {
+        document.removeEventListener('keydown', handleKeyDown);
+        console.log(`${event.key === '1' ? 'Success' : 'Failure'} key pressed`);
 
-    const removeListener = () => {
+        transactionResult = event.key === '1';
+        await startTransaction(transactionResult);
+
+        if (!transactionResult) {
+          document.addEventListener('keydown', handleKeyDown);
+        }
+      }
+    };
+
+    if (transactionResult === null) {
+      document.addEventListener('keydown', handleKeyDown);
+    }
+
+    if (transactionResult !== null) {
       document.removeEventListener('keydown', handleKeyDown);
-    };
-
-    const intervalCleanup = setInterval(() => {
-      if (transactionResult !== null) {
-        clearInterval(intervalCleanup);
-        removeListener();
-      }
-    }, 100);
+    }
   },
 
   BankCardCancel() {
