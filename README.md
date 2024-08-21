@@ -1,8 +1,9 @@
 # Coffee Vending Machine
 
-[DEMO](../../coffee.mov)
+[DEMO](https://github.com/user-attachments/assets/ea86d28c-5fd1-4cdb-8557-5991c335ce56)
 
 [Попробовать](https://coffee-vending-machine.netlify.app)
+
 
 Описание проекта
 
