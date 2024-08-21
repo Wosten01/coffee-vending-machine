@@ -11,6 +11,9 @@ import { resetCardAcceptor } from '../../../store/cardAcceptorSlice';
 function CardPayment() {
   const navigate = useNavigate();
   const { selectedProduct } = useSelector((state: RootState) => state.app);
+  const { isProcessing } = useSelector(
+    (state: RootState) => state.cardAcceptor
+  );
   const dispatch = useDispatch();
   const { statusMessage } = useSelector(
     (state: RootState) => state.cardAcceptor
@@ -18,6 +21,7 @@ function CardPayment() {
 
   useEffect(() => {
     if (!selectedProduct) {
+      dispatch(resetCardAcceptor());
       dispatch(resetApp());
       navigate('/');
       emulator.BankCardCancel();
@@ -56,14 +60,18 @@ function CardPayment() {
         </div>
       </section>
 
-      <section className="flex gap-4 h-20">
-        <button
-          className="px-8 py-4 text-3xl font-light bg-yellow-300 rounded-xl border border-gray-300 shadow-md hover:bg-yellow-500 transition-all"
-          onClick={handleCancel}
-        >
-          Вернуться
-        </button>
-      </section>
+      {!isProcessing ? (
+        <section className="h-20">
+          <button
+            className="px-8 py-4 text-3xl font-light bg-yellow-300 rounded-xl border border-gray-300 shadow-md hover:bg-yellow-500 transition-all"
+            onClick={handleCancel}
+          >
+            Вернуться
+          </button>
+        </section>
+      ) : (
+        <section className="h-20"></section>
+      )}
     </div>
   );
 }

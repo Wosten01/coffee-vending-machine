@@ -133,6 +133,7 @@ const emulator: Emulator & EmulatorState = {
           errorMessageIndex++;
           await new Promise((resolve) => setTimeout(resolve, 1000));
         }
+        await cb(result);
       }
     };
 
@@ -163,8 +164,8 @@ const emulator: Emulator & EmulatorState = {
     console.log('Canceling card transaction');
   },
 
-  Vend(product_idx, cb) {
-    console.log(`Запуск выдачи продукта с индексом ${product_idx}`);
+  Vend(product, cb) {
+    console.log(`Launching vending a product with id: ${product.id}`);
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === '1') {
@@ -182,7 +183,6 @@ const emulator: Emulator & EmulatorState = {
 
     const removeListener = () => {
       document.removeEventListener('keydown', handleKeyDown);
-      console.log('Remove keyboard handler');
     };
   },
 };

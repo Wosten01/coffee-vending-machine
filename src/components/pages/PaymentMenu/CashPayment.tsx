@@ -4,7 +4,7 @@ import { RootState } from '../../../store';
 import CashIcon from '../../shared/CashIcon';
 import NothingToShowScreen from '../../shared/NothingToShowScreen';
 import { useEffect, useState } from 'react';
-import { resetApp } from '../../../store/appSlice';
+import { resetApp, setVendStatus } from '../../../store/appSlice';
 import emulator from '../../../core/emulator';
 
 function CashPayment() {
@@ -65,6 +65,13 @@ function CashPayment() {
 
   const handleDispenseChange = () => {
     navigate('/drink-preparation');
+    emulator.Vend(selectedProduct, (result) => {
+      if (result) {
+        dispatch(setVendStatus({ status: true }));
+      } else {
+        dispatch(setVendStatus({ status: false }));
+      }
+    });
   };
 
   return (

@@ -4,12 +4,15 @@ import { RootState } from '../../../store';
 import emulator from '../../../core/emulator';
 import { useNavigate } from 'react-router-dom';
 import NothingToShowScreen from '../../shared/NothingToShowScreen';
-import { addToAmount, resetApp } from '../../../store/appSlice';
+import { addToAmount, resetApp, setVendStatus } from '../../../store/appSlice';
 import {
   resetStatus,
   setProcessing as setCashProcessing,
 } from '../../../store/cashAcceptorSlice';
-import { setStatusMessage } from '../../../store/cardAcceptorSlice';
+import {
+  setStatusMessage,
+  setProcessing as setCardProcessing,
+} from '../../../store/cardAcceptorSlice';
 
 function PaymentMenu() {
   const selectedProduct = useSelector(
@@ -53,10 +56,24 @@ function PaymentMenu() {
             if (result) {
               setTimeout(() => {
                 navigate('/drink-preparation');
+                emulator.Vend(selectedProduct, (result) => {
+                  if (result) {
+                    console.log(
+                      'The vending machine works and will work successfuly'
+                    );
+                    dispatch(setVendStatus({ status: true }));
+                  } else {
+                    console.log('Vending failure');
+                    dispatch(setVendStatus({ status: false }));
+                  }
+                });
               }, 2000);
+            } else {
+              dispatch(setCardProcessing({ status: false }));
             }
           },
           (message: string) => {
+            dispatch(setCardProcessing({ status: true }));
             dispatch(setStatusMessage({ message: message }));
           }
         );

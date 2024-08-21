@@ -4,6 +4,7 @@ import { Product } from '../data/products';
 interface AppState {
   selectedProduct: Product | null;
   enteredAmount: number;
+  isSuccessfulVend: boolean;
 }
 
 interface AmountPayload {
@@ -13,6 +14,7 @@ interface AmountPayload {
 const initialState: AppState = {
   selectedProduct: null,
   enteredAmount: 0,
+  isSuccessfulVend: true,
 };
 
 const appSlice = createSlice({
@@ -31,11 +33,20 @@ const appSlice = createSlice({
     resetApp: (state) => {
       state.selectedProduct = null;
       appSlice.caseReducers.resetAmount(state);
+      state.isSuccessfulVend = true;
+    },
+    setVendStatus: (state, action: PayloadAction<{ status: boolean }>) => {
+      state.isSuccessfulVend = action.payload.status;
     },
   },
 });
 
-export const { selectProduct, resetApp, addToAmount, resetAmount } =
-  appSlice.actions;
+export const {
+  selectProduct,
+  resetApp,
+  addToAmount,
+  resetAmount,
+  setVendStatus,
+} = appSlice.actions;
 
 export default appSlice.reducer;
