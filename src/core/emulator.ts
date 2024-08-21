@@ -168,11 +168,11 @@ const emulator: Emulator & EmulatorState = {
     console.log(`Launching vending a product with id: ${product.id}`);
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === '1') {
+      if (event.key === '3') {
         console.log('Success key pressed');
         cb(true);
         removeListener();
-      } else if (event.key === '2') {
+      } else if (event.key === '4') {
         console.log('Failure key pressed');
         cb(false);
         removeListener();

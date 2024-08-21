@@ -12,7 +12,9 @@ import {
 import {
   setStatusMessage,
   setProcessing as setCardProcessing,
+  resetCardAcceptor,
 } from '../../../store/cardAcceptorSlice';
+import { Product } from '../../../data/products';
 
 function PaymentMenu() {
   const selectedProduct = useSelector(
@@ -24,6 +26,18 @@ function PaymentMenu() {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const vend = (selectedProduct: Product) => {
+    emulator.Vend(selectedProduct, (result) => {
+      if (result) {
+        console.log('The vending machine works and will work successfuly');
+        dispatch(setVendStatus({ status: true }));
+      } else {
+        console.log('Vending failure');
+        dispatch(setVendStatus({ status: false }));
+      }
+    });
+  };
 
   useEffect(() => {
     if (!selectedProduct) {
@@ -56,17 +70,7 @@ function PaymentMenu() {
             if (result) {
               setTimeout(() => {
                 navigate('/drink-preparation');
-                emulator.Vend(selectedProduct, (result) => {
-                  if (result) {
-                    console.log(
-                      'The vending machine works and will work successfuly'
-                    );
-                    dispatch(setVendStatus({ status: true }));
-                  } else {
-                    console.log('Vending failure');
-                    dispatch(setVendStatus({ status: false }));
-                  }
-                });
+                vend(selectedProduct);
               }, 2000);
             } else {
               dispatch(setCardProcessing({ status: false }));
@@ -128,6 +132,8 @@ function PaymentMenu() {
             className="px-8 py-4 bg-yellow-300 text-3xl font-light rounded-xl border border-yellow-600 shadow-md hover:bg-yellow-500 transition-all"
             onClick={() => {
               navigate('/');
+              dispatch(resetCardAcceptor());
+              dispatch(resetStatus());
               dispatch(resetApp());
             }}
           >

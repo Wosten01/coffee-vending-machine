@@ -6,6 +6,8 @@ import NothingToShowScreen from '../../shared/NothingToShowScreen';
 import { useEffect, useState } from 'react';
 import { resetApp, setVendStatus } from '../../../store/appSlice';
 import emulator from '../../../core/emulator';
+import { resetCardAcceptor } from '../../../store/cardAcceptorSlice';
+import { resetStatus } from '../../../store/cashAcceptorSlice';
 
 function CashPayment() {
   const navigate = useNavigate();
@@ -19,6 +21,8 @@ function CashPayment() {
 
   useEffect(() => {
     if (!selectedProduct) {
+      dispatch(resetCardAcceptor());
+      dispatch(resetStatus());
       dispatch(resetApp());
       navigate('/');
       emulator.StopCashin();
@@ -67,8 +71,10 @@ function CashPayment() {
     navigate('/drink-preparation');
     emulator.Vend(selectedProduct, (result) => {
       if (result) {
+        console.log('The vending machine works and will work successfuly');
         dispatch(setVendStatus({ status: true }));
       } else {
+        console.log('Vending failure');
         dispatch(setVendStatus({ status: false }));
       }
     });

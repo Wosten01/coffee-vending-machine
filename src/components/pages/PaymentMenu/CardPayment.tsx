@@ -7,6 +7,7 @@ import { useEffect } from 'react';
 import { resetApp } from '../../../store/appSlice';
 import emulator from '../../../core/emulator';
 import { resetCardAcceptor } from '../../../store/cardAcceptorSlice';
+import { resetStatus } from '../../../store/cashAcceptorSlice';
 
 function CardPayment() {
   const navigate = useNavigate();
@@ -22,6 +23,7 @@ function CardPayment() {
   useEffect(() => {
     if (!selectedProduct) {
       dispatch(resetCardAcceptor());
+      dispatch(resetStatus());
       dispatch(resetApp());
       navigate('/');
       emulator.BankCardCancel();
