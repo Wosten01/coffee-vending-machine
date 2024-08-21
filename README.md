@@ -2,7 +2,7 @@
 
 [DEMO](../../coffee.mov)
 
-[Попробовать]()
+[Попробовать](https://coffee-vending-machine.netlify.app)
 
 Описание проекта
 
